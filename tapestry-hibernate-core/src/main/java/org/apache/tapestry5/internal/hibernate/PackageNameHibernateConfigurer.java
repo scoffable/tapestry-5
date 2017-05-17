@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateEntityPackageManager;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -38,13 +37,11 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
 
     public void configure(Configuration configuration)
     {
-        AnnotationConfiguration cfg = (AnnotationConfiguration) configuration;
-
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         for (String packageName : packageManager.getPackageNames())
         {
-            cfg.addPackage(packageName);
+        	configuration.addPackage(packageName);
 
             for (String className : classNameLocator.locateClassNames(packageName))
             {
@@ -52,7 +49,7 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
                 {
                     Class entityClass = contextClassLoader.loadClass(className);
 
-                    cfg.addAnnotatedClass(entityClass);
+                    configuration.addAnnotatedClass(entityClass);
                 }
                 catch (ClassNotFoundException ex)
                 {

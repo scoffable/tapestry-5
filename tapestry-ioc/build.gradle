@@ -6,7 +6,7 @@ dependencies {
   compile project(":plastic")
   compile "javassist:javassist:3.12.1.GA"
 
-  provided project(':tapestry-test')
+  // provided project(':tapestry-test')
 
   // For now, keep these compile dependencies synchronized with the binaries dependencies
   // of the top-level build:
@@ -19,7 +19,7 @@ dependencies {
 
   testCompile "org.spockframework:spock-core:${versions.spock}"
 
-  provided "org.testng:testng:${versions.testng}", { transitive = false }
+  // provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
 
 test {
