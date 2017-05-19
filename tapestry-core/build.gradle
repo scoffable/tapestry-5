@@ -18,8 +18,8 @@ dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
 
-  provided project(":tapestry-test")
-  provided "javax.servlet:servlet-api:${versions.servletapi}"
+  // provided project(":tapestry-test")
+  // provided "javax.servlet:servlet-api:${versions.servletapi}"
 
   compile "commons-codec:commons-codec:1.5"
 

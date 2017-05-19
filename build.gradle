@@ -1,7 +1,7 @@
 description = "Apache Tapestry 5 Project"
 
 apply plugin: "base"
-apply plugin: "sonar"
+// apply plugin: "sonar"
 
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
@@ -9,7 +9,6 @@ apply from: "md5.gradle"
 project.ext.versions = [
   // Remember that when generating a release, this should be incremented. Also don"t forget to
   // tag the release in Git.
-  tapestry: "5.3.8",
   jetty: "7.0.0.v20091005",
   tomcat: "6.0.30",
   testng: "5.14.10",
@@ -18,13 +17,24 @@ project.ext.versions = [
   spock: "0.6-groovy-1.8"
 ]
 
+ext.continuousIntegrationBuild = Boolean.getBoolean("ci")
+
 // Provided so that the CI server can override the normal version number for nightly builds.
-version = System.getProperty("project-version", versions.tapestry)
+project.version = tapestryVersion()
+def tapestryVersion() {
+
+    def major = "5.3.8"
+    def minor = ".scoffable1"
+
+    // When building on the CI server, make sure -SNAPSHOT is appended, as it is a nightly build.
+    // When building normally, or for a release, no suffix is desired.
+    continuousIntegrationBuild ? major + "-SNAPSHOT" : major + minor
+}
 
 // Let analysis.apache.org get in touch with our builds
 
 project.ext {
-    sonarUrl = System.getProperty("sonarUrl", "http://analysis.apache.org");
+    sonarUrl = System.getProperty("sonarUrl", "https://analysis.apache.org");
     sonarDbUrl = System.getProperty("sonarDbUrl", "");
     sonarDbUsername = System.getProperty("sonarDbUsername", "");
     sonarDbPassword = System.getProperty("sonarDbPassword", "");
@@ -46,18 +56,6 @@ project.ext {
     deployPassword = { getProperty(deployPasswordProperty) }
 }
 
-sonar {
-    server {
-        url = sonarUrl
-    }
-    database {
-        url = sonarDbUrl
-        driverClassName = sonarDbDriverClassName
-        username = sonarDbUsername
-        password = sonarDbPassword
-    }
-}
-
 allprojects {
 
     apply plugin: "eclipse"
@@ -69,14 +67,9 @@ allprojects {
         mavenCentral()
 
         // All things JBoss/Hibernate
-        mavenRepo name: "JBoss", url: "https://repository.jboss.org/nexus/content/repositories/releases/"
-    }
-
-    idea {
-        project {
-            // Technically, Tapestry is built for JDK 1.5, but we're all using Eclipse or IntelliJ with
-            // JDK 1.6 at this point.
-            jdkName = "1.6"
+        maven {
+            name "JBoss"
+            url "https://repository.jboss.org/nexus/content/repositories/releases/"
         }
     }
 
@@ -85,6 +78,14 @@ allprojects {
         meta
     }
 
+}
+
+idea {
+    project {
+        languageLevel = "1.6"
+        // But this is what most (all?) of the devs are actually using:
+        jdkName = "1.7"
+    }
 }
 
 // Specific to top-level build, not set for subprojects:
@@ -146,7 +147,7 @@ subprojects {
     }
 
     dependencies {
-        groovy "org.codehaus.groovy:groovy-all:1.8.6"
+  	compile "org.codehaus.groovy:groovy-all:1.8.6"
 
         deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
     }

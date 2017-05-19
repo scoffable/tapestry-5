@@ -1,6 +1,6 @@
 description = "Basic Hibernate services for Tapestry, useable outside of a Tapestry web application"
 
-versions.hibernate = '3.6.0.Final'
+versions.hibernate = '4.3.11.Final'
 
 dependencies {
   compile project(':tapestry-ioc')
